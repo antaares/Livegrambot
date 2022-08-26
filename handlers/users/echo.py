@@ -1,9 +1,26 @@
 from aiogram import types
 
-from loader import dp
+from loader import dp, db
+from data.config import ADMINS
+
+
+from filters.admins import IsAdmin
+
+
+
+
+
+
 
 
 # Echo bot
-@dp.message_handler(state=None)
+@dp.message_handler(state='*')
 async def bot_echo(message: types.Message):
-    await message.answer(message.text)
+    is_ban = db.is_banned_user(message.from_user.id)
+    if is_ban:
+        return await message.answer("Siz qora ro'yxatdasiz!")
+    message_ = await message.forward(ADMINS[0])
+    db.add_message(message.chat.id, message_.message_id)
+
+
+
