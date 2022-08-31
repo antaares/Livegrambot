@@ -6,6 +6,7 @@ name = "pypi"
 [packages]
 environs = "~=8.0.0"
 aiogram = "*"
+aioschedule = "*"
 
 [dev-packages]
 

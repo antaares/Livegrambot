@@ -1,13 +1,16 @@
 import sqlite3
-
+from datetime import datetime
 
 class Database:
+    _now = datetime.now()
+    base_date = _now.strftime("%Y-%m-%d")
     def __init__(self, path_to_db="main.db"):
         self.path_to_db = path_to_db
 
     @property
     def connection(self):
         return sqlite3.connect(self.path_to_db)
+        
 
     def execute(self, sql: str, parameters: tuple = None, fetchone=False, fetchall=False, commit=False):
         if not parameters:
@@ -40,7 +43,8 @@ class Database:
         sql = """
         CREATE TABLE IF NOT EXISTS Messages(
             chat_id int NOT NULL,
-            message_id int NOT NULL
+            message_id int NOT NULL,
+            push_date datetime NOT NULL
         );
         """
         self.execute(sql, commit=True)
@@ -67,11 +71,11 @@ class Database:
         """
         self.execute(sql, parameters=(id, name,), commit=True)
 
-    def add_message(self, chat_id: int, message_id: int):
+    def add_message(self, chat_id: int, message_id: int, push_date: str):
         sql = """
-        INSERT INTO Messages(chat_id, message_id) VALUES(?, ?)
+        INSERT INTO Messages(chat_id, message_id, push_date) VALUES(?, ?, ?)
         """
-        self.execute(sql, parameters=(chat_id, message_id,), commit=True)
+        self.execute(sql, parameters=(chat_id, message_id, push_date), commit=True)
     
 
     def get_message_chat_id(self, message_id: int):
@@ -97,3 +101,13 @@ class Database:
         DELETE FROM BannedUsers WHERE id = ?
         """
         self.execute(sql, parameters=(id,), commit=True)
+    
+    def delete_old_messages(self):
+        import datetime
+        prev = datetime.datetime.today() - datetime.timedelta(days=15)
+        prev_date = prev.strftime("%Y-%m-%d")
+        sql = """
+        DELETE FROM Messages WHERE push_date BETWEEN ? and ?
+        """
+        # print("Deleting old messages")
+        self.execute(sql, parameters=(self.base_date, prev_date,), commit=True)
