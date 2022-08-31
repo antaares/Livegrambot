@@ -10,5 +10,5 @@
 # IP = env.str("ip")  # Xosting ip manzili
 
 
-ADMINS = [1393139047, 1042548328]
+ADMINS = [1393139047]
 BOT_TOKEN = "5602232659:AAGLqdnoHt3qYpQKRUXdjhdaydbaaKUSGHDSSsbv"
