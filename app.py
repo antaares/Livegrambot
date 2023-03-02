@@ -23,7 +23,12 @@ async def scheduler(time_):
         await aioschedule.run_pending()
         await asyncio.sleep(1)
 
+async def main():
+    task_ = asyncio.create_task(scheduler('00:00'))
+    await task_
+    
+
 
 if __name__ == '__main__':
-    asyncio.create_task(scheduler('00:00'))
     executor.start_polling(dp, on_startup=on_startup)
+    asyncio.run(main())
