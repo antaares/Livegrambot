@@ -20,7 +20,10 @@ async def bot_echo(message: types.Message):
     if is_ban:
         return await message.answer("Siz qora ro'yxatdasiz!")
     message_ = await message.forward(ADMINS[0])
-    db.add_message(message.chat.id, message_.message_id)
+    import datetime
+    prev = datetime.datetime.today()
+    prev_date = prev.strftime("%Y-%m-%d")
+    db.add_message(message.chat.id, message_.message_id, push_date=prev_date)
 
 
 
